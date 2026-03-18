@@ -182,7 +182,7 @@
 
     overlayContainer = document.createElement('div');
     overlayContainer.id = 'grammarpal-overlay-container';
-    overlayContainer.style.cssText = 'position:absolute;top:0;left:0;width:0;height:0;overflow:visible;z-index:2147483640;pointer-events:none;';
+    overlayContainer.style.cssText = 'position:fixed;top:0;left:0;width:0;height:0;overflow:visible;z-index:2147483640;pointer-events:none;';
 
     const shadow = overlayContainer.attachShadow({ mode: 'open' });
     const style = document.createElement('style');
@@ -264,34 +264,36 @@
     wrapper.innerHTML = '';
 
     const rect = el.getBoundingClientRect();
-    const scrollTop = window.scrollY || document.documentElement.scrollTop;
-    const scrollLeft = window.scrollX || document.documentElement.scrollLeft;
 
     const { diffHtml, correctedText, count } = buildCorrectedOutput(originalText, corrections);
 
-    // Main panel — compact, positioned beside the text field
+    // Main panel — compact, fixed to viewport, draggable
     const panel = document.createElement('div');
     panel.className = 'gp-panel';
 
     const panelWidth = 300;
+    const panelEstHeight = 220;
     const viewportW = window.innerWidth;
     const viewportH = window.innerHeight;
+    const margin = 10;
 
-    // Try right side first, fall back to left, then below
-    let panelTop = rect.top + scrollTop;
+    // Position: try right side of text field, then left, then below — all viewport-relative
+    let panelTop = Math.max(margin, rect.top);
     let panelLeft;
-    if (rect.right + panelWidth + 12 < viewportW) {
-      panelLeft = rect.right + scrollLeft + 8;
-    } else if (rect.left - panelWidth - 12 > 0) {
-      panelLeft = rect.left + scrollLeft - panelWidth - 8;
+    if (rect.right + panelWidth + margin < viewportW) {
+      panelLeft = rect.right + 8;
+    } else if (rect.left - panelWidth - margin > 0) {
+      panelLeft = rect.left - panelWidth - 8;
     } else {
-      panelLeft = rect.left + scrollLeft;
-      panelTop = rect.bottom + scrollTop + 6;
+      panelLeft = Math.max(margin, Math.min(rect.left, viewportW - panelWidth - margin));
+      panelTop = Math.min(rect.bottom + 6, viewportH - panelEstHeight - margin);
     }
-    // Keep within viewport vertically
-    panelTop = Math.max(scrollTop + 8, panelTop);
 
-    panel.style.cssText = `position:absolute;top:${panelTop}px;left:${panelLeft}px;z-index:2147483642;pointer-events:auto;width:${panelWidth}px;`;
+    // Clamp within viewport
+    panelTop = Math.max(margin, Math.min(panelTop, viewportH - panelEstHeight - margin));
+    panelLeft = Math.max(margin, Math.min(panelLeft, viewportW - panelWidth - margin));
+
+    panel.style.cssText = `position:fixed;top:${panelTop}px;left:${panelLeft}px;z-index:2147483642;pointer-events:auto;width:${panelWidth}px;`;
 
     // Determine score color
     const score = analysis.overall_score || 0;
@@ -354,13 +356,52 @@
       updateIndicatorState('idle');
     });
 
+    // ── Drag support: grab the header to move the panel ──
+    const header = panel.querySelector('.gp-header');
+    let isDragging = false, dragOffsetX = 0, dragOffsetY = 0;
+
+    header.addEventListener('mousedown', (e) => {
+      if (e.target.closest('.gp-close-btn')) return; // don't drag on close button
+      isDragging = true;
+      dragOffsetX = e.clientX - panel.getBoundingClientRect().left;
+      dragOffsetY = e.clientY - panel.getBoundingClientRect().top;
+      e.preventDefault();
+    });
+
+    const onMouseMove = (e) => {
+      if (!isDragging) return;
+      let newLeft = e.clientX - dragOffsetX;
+      let newTop = e.clientY - dragOffsetY;
+      // Clamp within viewport
+      newLeft = Math.max(0, Math.min(newLeft, window.innerWidth - panelWidth));
+      newTop = Math.max(0, Math.min(newTop, window.innerHeight - 50));
+      panel.style.left = newLeft + 'px';
+      panel.style.top = newTop + 'px';
+    };
+
+    const onMouseUp = () => { isDragging = false; };
+
+    document.addEventListener('mousemove', onMouseMove, true);
+    document.addEventListener('mouseup', onMouseUp, true);
+
+    // Store cleanup refs so we can remove on clear
+    panel.__gpDragCleanup = () => {
+      document.removeEventListener('mousemove', onMouseMove, true);
+      document.removeEventListener('mouseup', onMouseUp, true);
+    };
+
     wrapper.appendChild(panel);
   }
 
   function clearOverlay() {
     if (overlayContainer) {
       const wrapper = overlayContainer.shadowRoot?.getElementById('gp-wrapper');
-      if (wrapper) wrapper.innerHTML = '';
+      if (wrapper) {
+        // Clean up drag listeners
+        const panel = wrapper.querySelector('.gp-panel');
+        if (panel?.__gpDragCleanup) panel.__gpDragCleanup();
+        wrapper.innerHTML = '';
+      }
     }
     currentAnalysis = null;
   }
@@ -480,7 +521,9 @@
         padding: 8px 12px;
         background: linear-gradient(135deg, rgba(99,102,241,0.08), rgba(147,51,234,0.06));
         border-bottom: 1px solid rgba(255,255,255,0.06);
+        cursor: grab; user-select: none;
       }
+      .gp-header:active { cursor: grabbing; }
       .gp-header-left { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
       .gp-header-right { display:flex; align-items:center; gap:10px; }
       .gp-logo { font-size:11px; font-weight:800; letter-spacing:-0.3px;
