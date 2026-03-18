@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GrammarPal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup-container">
+    <!-- Header -->
+    <div class="popup-header">
+      <div class="logo-section">
+        <div class="logo-icon">✏️</div>
+        <div class="logo-text">
+          <span class="logo-name">GrammarPal</span>
+          <span class="logo-tag">AI Writing Assistant</span>
+        </div>
+      </div>
+      <div class="toggle-wrap">
+        <label class="toggle" id="toggleLabel">
+          <input type="checkbox" id="enableToggle" checked>
+          <span class="toggle-slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Score Ring -->
+    <div class="score-section">
+      <div class="score-ring-container">
+        <svg class="score-ring" viewBox="0 0 120 120">
+          <circle class="score-ring-bg" cx="60" cy="60" r="52"></circle>
+          <circle class="score-ring-fill" id="scoreRingFill" cx="60" cy="60" r="52"></circle>
+        </svg>
+        <div class="score-value" id="scoreValue">—</div>
+        <div class="score-label">Writing Score</div>
+      </div>
+    </div>
+
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+      <div class="stat-card" id="grammarStat">
+        <div class="stat-icon grammar-icon">📝</div>
+        <div class="stat-info">
+          <span class="stat-count" id="grammarCount">0</span>
+          <span class="stat-label">Grammar</span>
+        </div>
+      </div>
+      <div class="stat-card" id="spellingStat">
+        <div class="stat-icon spelling-icon">🔤</div>
+        <div class="stat-info">
+          <span class="stat-count" id="spellingCount">0</span>
+          <span class="stat-label">Spelling</span>
+        </div>
+      </div>
+      <div class="stat-card" id="clarityStat">
+        <div class="stat-icon clarity-icon">💡</div>
+        <div class="stat-info">
+          <span class="stat-count" id="clarityCount">0</span>
+          <span class="stat-label">Clarity</span>
+        </div>
+      </div>
+      <div class="stat-card" id="toneStat">
+        <div class="stat-icon tone-icon">🎭</div>
+        <div class="stat-info">
+          <span class="stat-count" id="toneValue">—</span>
+          <span class="stat-label">Tone</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Status Message -->
+    <div class="status-message" id="statusMessage">
+      <span class="status-dot"></span>
+      <span class="status-text">Ready — start typing in any text field</span>
+    </div>
+
+    <!-- Footer -->
+    <div class="popup-footer">
+      <button class="settings-btn" id="settingsBtn">
+        ⚙️ Settings
+      </button>
+      <span class="version">v1.0.0</span>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+/* GrammarPal Content CSS — minimal injected styles (main UI uses Shadow DOM) */
+
+#grammarpal-overlay-container,
+#grammarpal-indicator {
+  all: initial;
+  position: absolute;
+  z-index: 2147483640;
+  font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+}

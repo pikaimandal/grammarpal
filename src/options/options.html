@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GrammarPal — Settings</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <div class="options-wrapper">
+    <!-- Header -->
+    <header class="options-header">
+      <div class="header-content">
+        <div class="logo-section">
+          <div class="logo-icon">✏️</div>
+          <div>
+            <h1 class="logo-name">GrammarPal</h1>
+            <p class="logo-tag">Settings & Configuration</p>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main class="options-main">
+      <!-- API Configuration -->
+      <section class="settings-section">
+        <div class="section-header">
+          <h2>🔑 API Configuration</h2>
+          <p class="section-desc">Configure your AI provider. Uses DigitalOcean Gradient AI by default.</p>
+        </div>
+
+        <div class="settings-card">
+          <div class="form-group">
+            <label for="provider">AI Provider</label>
+            <select id="provider" class="form-select">
+              <option value="digitalocean">DigitalOcean Gradient AI (Default)</option>
+              <option value="openai">OpenAI</option>
+              <option value="anthropic">Anthropic</option>
+              <option value="custom">Custom (OpenAI-compatible)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="apiKey">API Key</label>
+            <div class="input-with-toggle">
+              <input type="password" id="apiKey" class="form-input" placeholder="Enter your API key" autocomplete="off">
+              <button type="button" class="toggle-visibility" id="toggleKey" title="Show/Hide Key">👁️</button>
+            </div>
+            <span class="form-hint" id="apiKeyHint">Leave blank to use the default DigitalOcean key.</span>
+          </div>
+
+          <div class="form-group hidden" id="customEndpointGroup">
+            <label for="customEndpoint">Custom API Endpoint</label>
+            <input type="url" id="customEndpoint" class="form-input" placeholder="https://your-api-endpoint.com/v1/chat/completions">
+          </div>
+
+          <div class="form-group hidden" id="customModelGroup">
+            <label for="customModel">Model Name</label>
+            <input type="text" id="customModel" class="form-input" placeholder="e.g. gpt-4o, claude-3-sonnet">
+          </div>
+
+          <div class="form-group">
+            <label>Provider Info</label>
+            <div class="provider-info" id="providerInfo">
+              <div class="info-row"><span class="info-label">Endpoint:</span> <code id="infoEndpoint">https://inference.do-ai.run/v1/chat/completions</code></div>
+              <div class="info-row"><span class="info-label">Model:</span> <code id="infoModel">gpt-oss-120b</code></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Writing Preferences -->
+      <section class="settings-section">
+        <div class="section-header">
+          <h2>✍️ Writing Preferences</h2>
+          <p class="section-desc">Customize how GrammarPal evaluates your writing.</p>
+        </div>
+
+        <div class="settings-card">
+          <div class="form-group">
+            <label for="writingStyle">Writing Style</label>
+            <select id="writingStyle" class="form-select">
+              <option value="neutral">Neutral (Auto-detect)</option>
+              <option value="formal">Formal / Professional</option>
+              <option value="casual">Casual / Conversational</option>
+              <option value="academic">Academic / Technical</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <!-- Disabled Sites -->
+      <section class="settings-section">
+        <div class="section-header">
+          <h2>🚫 Disabled Sites</h2>
+          <p class="section-desc">GrammarPal won't run on these websites.</p>
+        </div>
+
+        <div class="settings-card">
+          <div class="form-group">
+            <div class="add-site-row">
+              <input type="text" id="newSite" class="form-input" placeholder="e.g. example.com">
+              <button type="button" class="btn btn-secondary" id="addSiteBtn">Add</button>
+            </div>
+          </div>
+
+          <ul class="disabled-sites-list" id="disabledSitesList">
+            <!-- Populated by JS -->
+          </ul>
+
+          <p class="empty-state" id="noSitesMsg">No sites disabled. GrammarPal runs everywhere.</p>
+        </div>
+      </section>
+
+      <!-- Actions -->
+      <div class="actions-bar">
+        <button class="btn btn-primary" id="saveBtn">💾 Save Settings</button>
+        <button class="btn btn-ghost" id="resetBtn">Reset to Defaults</button>
+      </div>
+
+      <!-- Toast -->
+      <div class="toast" id="toast">
+        <span class="toast-icon">✓</span>
+        <span class="toast-text">Settings saved successfully!</span>
+      </div>
+    </main>
+  </div>
+
+  <script src="options.js"></script>
+</body>
+</html>
